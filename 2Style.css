@@ -1,0 +1,21 @@
+ h1 {
+    color: rgb(184, 255, 232);
+ }
+ p {
+    color: rgb(222, 237, 233);
+ }
+ h3 {
+    color: rgb(237, 237, 237);
+ }
+
+body, html {
+  height: 100%;
+}
+
+.bg {
+  background-image: url("assets/images/CloudScene_3.png");
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

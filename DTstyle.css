@@ -1,0 +1,21 @@
+ h1 {
+    color: rgb(40, 40, 40);
+ }
+ p {
+    color: rgb(40, 40, 40);
+ }
+ h3 {
+    color: rgb(40, 40, 40);
+ }
+
+body, html {
+  height: 100%;
+}
+
+.bg {
+  background-image: url("assets/images/405.gif");
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

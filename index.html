@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="style.css">
+		<title>Final Project  — To The Clouds</title>
+	</head>
+	<style>
+body {
+  background-image: url('assets/images/CloudScene_1.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 100% 100%;
+}
+</style>
+	<body>
+		<img id="loading" height="750" width="1503" src="assets/images/loading.gif">
+		<h1>Final Project — ☁ To The Clouds ☁</h1>
+		<p>Made by Isaac Hickman</p>
+		<ul>
+			<li><a href="index.html">New Game (Resets Progress / Data)</a></li>
+			<li><a href="contact.html">Contact Me!</a></li>
+			<li><a href="controls.html">How To Play / Controls</a></li>
+			<li><a href="settings.html">Settings / Preferences</a></li>
+			<li><a href="DT.html">Dev Tools</a></li>
+			<li><a href="index2.html">Level 2</a></li>
+	    </ul>
+	    <br>
+	    <label id="nameLabel" for="name">Name: </label>
+	    <input name="name" id="name" type="text">
+	    <button name="btn" id="btn">Submit</button>
+		<h3>Description</h3>
+		<p id="description">This is the description of the project.
+		</p>
+		<script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
+		<script src="appLvl1.js"></script>
+	</body>
+</html>
