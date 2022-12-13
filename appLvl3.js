@@ -1,17 +1,18 @@
 // Level 3
+// The comments are the same as appLvl1.js (Level 1) but in relation to Level 3 (this level) and its changes
 
 const btnMM = document.getElementById("btnMM");
 
 btn.addEventListener("click", function() {
 	const description = document.getElementById("description");
 	const name = document.getElementById("name");
-	description.innerHTML = name.value + (", this is the description of the project.");
+	description.innerHTML = name.value + (", this game is inspired by the classic 'Space Invaders' where instead of controlling a ship moving through space, you control a character named Codey. As you progress throughout the game to complete three levels, you fly up along a vast landscape of clouds until you reach the sky's limit. The objective of the game, much like its 1978 predecessor, is to destroy all of the enemies. Alternatively, you can also win by surviving long enough. A more detailed description can be found under the Project Overview section in the game's comments.");
 	name.remove();
 	document.getElementById("nameLabel").remove();
 	btn.remove();
 });
 
-const gameState = {enemyVelocity: 1};
+const gameState = {enemyVelocity: 1.4};
 
 function sortedEnemies(){
   const orderedByXCoord = gameState.enemies.getChildren().sort((a, b) => a.x - b.x);
@@ -58,6 +59,7 @@ function preload() {
 
 function create() {
 	gameState.active = true;
+	gameState.enemyVelocity = 1.4;
 	const loading = document.getElementById("loading");
 	gameState.vineBoom = this.sound.add('vineBoom');
 	gameState.death = this.sound.add('death');
@@ -106,11 +108,17 @@ function create() {
 
   const container2 = this.add.container(200, 50, [ sprite2 ]);
 
+	sprite3 = this.add.image(300, 50, 'bug6').setScale(0.5);
+  this.physics.world.enable([ sprite3 ]);
+  sprite3.body.setVelocity(100, -200).setBounce(1, 1).setCollideWorldBounds(true);
+
+	const container3 = this.add.container(100, 25, [ sprite3 ]);
+
 	this.add.image('bugPellet').setScale(2);
   image = this.add.image(600, 300, 'bug6');
   text = this.add.text(36, 12, { fontSize: '15px', fontFamily: 'Times New Roman', color: '#ebebeb' });
 	text.setStyle({ fontSize: '15px', fontFamily: 'Times New Roman', color: '#ebebeb' });
-  timedEvent = this.time.delayedCall(112500, onEvent, [], this);
+  timedEvent = this.time.delayedCall(100000, onEvent, [], this);
 
 	wings = this.add.image(0, 0, 'wings').setScale(0.022);
   this.physics.world.enable([ wings ]);
@@ -163,7 +171,7 @@ function create() {
 	const horiforms = this.physics.add.staticGroup();
 	const bars = this.physics.add.staticGroup();
 
-	platforms.create(225, 390, 'platform').setScale(1, .3).refreshBody();
+	platforms.create(226, 390, 'platform').setScale(1, .3).refreshBody();
 	sideBorders.create(469, 153, 'sideBorder').setScale(1).refreshBody();
 	vertforms.create(-19, 153, 'vertform').setScale(1).refreshBody();
 	horiforms.create(244, 148, 'horiform').setScale(1, .4).refreshBody();
@@ -193,7 +201,7 @@ function create() {
 	};
 
 	gameState.pelletsLoop = this.time.addEvent({
-		delay: 300,
+		delay: 166,
 		callback: genPellet,
 		callbackScope: this,
 		loop: true
@@ -261,6 +269,23 @@ function create() {
 		loading.remove();
 	});
 
+	this.physics.add.collider(sprite3, gameState.player, () => {
+    gameState.active = false;
+    gameState.pelletsLoop.destroy();
+		gameState.enemyVelocity = 0;
+		gameState.street.pause();
+		gameState.fall.pause();
+		gameState.walkP.pause();
+		gameState.flapP.pause();
+		gameState.shoot.pause();
+		this.physics.pause();
+		this.add.text(175, 250, '   Game Over \n Click to Restart',
+		{ fontSize: '15px', fontFamily: 'Georgia', fill: '#fff' });
+		playAudio();
+		timedEvent.remove(false);
+		loading.remove();
+	});
+
 	this.physics.add.collider(wings, gameState.player, () => {
 		playAudioPU();
 		wings.destroy();
@@ -291,6 +316,8 @@ function update() {
 	updateAux1();
 	updateFPS();
 	this.physics.world.collide(sprite1, sprite2);
+	this.physics.world.collide(sprite1, sprite3);
+	this.physics.world.collide(sprite2, sprite3);
 	text.setText('Time: ' + timedEvent.getProgress().toString().substr(0, 4));
 	if (gameState.cursors.left.isDown) {
 		gameState.player.setVelocityX(-160);
@@ -325,6 +352,7 @@ function update() {
 		gameState.enemyVelocity = 0;
     this.physics.pause();
     this.add.text(165, 250,'You Won!', { fontSize: '22.5px', fontFamily: 'Georgia', fill: '#fff' });
+		timedEvent.remove(false);
   } else {
     gameState.enemies.getChildren().forEach(bug => {
       bug.x += gameState.enemyVelocity;
@@ -368,7 +396,7 @@ const config = {
 	type: Phaser.AUTO,
 	width: 452,
 	height: 407,
-	backgroundColor: "7472db",
+	backgroundColor: "706fa8",
 	physics: {
 		default: 'arcade',
 		arcade: {
@@ -388,7 +416,7 @@ const config = {
 const game = new Phaser.Game(config);
 
 function render() {
-  game.debug.text('FPS: ' + game.time.fps, 175, 250, '#4c408e');
+  //game.debug.text('FPS: ' + game.time.fps, 175, 250, '#4c408e');
 }
 	
 render();

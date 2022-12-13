@@ -1,27 +1,39 @@
 // PROJECT OVERVIEW:
 
 /*
-Placeholder: Filler filler filler filler filler filler filler filler...
-Filler filler filler filler filler filler...
-Comment testing, comment testing, comment testing..
+"To The Clouds" is a game inspired by the classic "Space Invaders" where instead of controlling a ship moving through space, you control a character named Codey. As you progress throughout the game to complete three levels, you fly up along a vast landscape of clouds until you reach the sky's limit. The objective of the game, much like its 1978 predecessor, is to destroy all of the enemies. Alternatively, you can also win by surviving long enough.
+
+The game is played on a small, rectangular, single screen; the player and enemies are always present on this same screen. You, the player, control the movement of Codey by pressing the left, right, up, or down arrow keys. You can also press the space bar to fire a missile at the enemy bugs to destroy them.
+
+The enemies are visually represented as bugs. These bugs look diferent per level.
+There are two types of bugs: "Buggers" and "Bugemies" BUGGERS are the enemy bugs that are randomly positioned at the top of the screen. Unlike BUGEMIES, BUGGERS can be destroyed by the player. BUGEMIES are the unkillable enemy bugs that bounce around the screen in attempt to get a sneaky shot in killing the player. BUGEMIES increase in count as the player progresses.
+
+The game is written in a way that makes it easiest to play in a browser / on a desktop computer.
+The game is also not a full-screen game.
+The game is written in JavaScript and uses HTML5 canvas in sync with CSS.
 */
 
-// Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-//const btn = document.getElementById("btn");
-const btnMM = document.getElementById("btnMM");
+// GAME SETUP:
+// Stores (in constant variable) the "Mute" Button pulled in from settings.html
+const btnM = document.getElementById("btnM");
+// Stores (in constant variable) the "Test OBJ" Button pulled in from DT.html (Dev Tools)
 const btnX = document.getElementById("btnX");
 
+// onEvent when the "Submit" button is clicked
 btn.addEventListener("click", function() {
+// Declares above the "Submit" Button pulled in from index.html as an event listener
+	// Stores below (in constant variable) the description [project overview] text pulled in from index.html
 	const description = document.getElementById("description");
+	// Stores (in constant variable) the name that the user inputs in the text field pulled from index.html
 	const name = document.getElementById("name");
-	description.innerHTML = name.value + (", this is the description of the project.");
+	description.innerHTML = name.value + (", this game is inspired by the classic 'Space Invaders' where instead of controlling a ship moving through space, you control a character named Codey. As you progress throughout the game to complete three levels, you fly up along a vast landscape of clouds until you reach the sky's limit. The objective of the game, much like its 1978 predecessor, is to destroy all of the enemies. Alternatively, you can also win by surviving long enough. A more detailed description can be found under the Project Overview section in the game's comments.");
+	// Removes the text field, the user's name, and the "Submit" button from the DOM
 	name.remove();
 	document.getElementById("nameLabel").remove();
 	btn.remove();
 });
 
-//btnMM.addEventListener("click", function() {
+//btnM.addEventListener("click", function() {
 	//gameState.street.pause();
 //});
 
@@ -29,21 +41,31 @@ btn.addEventListener("click", function() {
 	//gameState.obj = {};
 //});
 
+// A constant variable that stores the current enemy bugger velocity
 const gameState = {enemyVelocity: 0};
 
-//const fpsText = {};
-//const bugemies = {};
+// Pre-assigning FPS [frames per second] Text (in constant variable) to the "FPS" label for later use
+const fpsText = {};
 
+// return {return} in function sortedEnemies() returns an array of the main enemy bug sprites (buggers) sorted by their x coordinate [orderedByXCoord].
 function sortedEnemies(){
   const orderedByXCoord = gameState.enemies.getChildren().sort((a, b) => a.x - b.x);
   return orderedByXCoord;
 }
+// return {return} in function numOfTotalEnemies() returns the main total enemy (bugger) count [totalEnemies].
 function numOfTotalEnemies(){
 	const totalEnemies = gameState.enemies.getChildren().length;
   return totalEnemies;
 }
 
+// PRELOAD FUNCTION
+// Preloading images and audio files through function preload()
 function preload() {
+	/*
+	A simple explanation of this code using Codey as an example:
+	1. This code preloads an image called "codey"
+	2. It loads this image from filename "codey.png" located in directory "assets/images"
+  */
 	this.load.image('codey', 'assets/images/codey.png');
 	this.load.image('platform', 'assets/images/platform.png');
 	this.load.image('sideBorder', 'assets/images/vertform1.png');
@@ -77,11 +99,13 @@ function preload() {
 	this.load.audio('pu2', 'assets/audio/powerup2.mp3');
 }
 
+// CREATE FUNCTION
 function create() {
+	// When gameState.active is true, the game is being played; therefore, the game is not over. When gameState.active is false, then the game is over.
 	gameState.active = true;
-	//const loading = this.image.add(750, 1610, 'loading');
-	//gameState.loading = this.image.add(750, 1610, 'loading');
+	// Stores (in constant variable) the loading screen pulled in from index.html
 	const loading = document.getElementById("loading");
+	// Declaring / Adding the sounds from function preload() through gameState
 	gameState.vineBoom = this.sound.add('vineBoom');
 	gameState.death = this.sound.add('death');
 	gameState.death2 = this.sound.add('death2');
@@ -97,14 +121,39 @@ function create() {
 	gameState.pu1 = this.sound.add('pu1');
 	gameState.pu2 = this.sound.add('pu2');
 
-	fpsText = this.add.text(360, 8, 'FPS: -- \n-- Bugemies', {
-        font: '10px Georgia',
-        fill: '#000000'
-	});
+	// Global variables of function create() to use in functions updateFPS() and renderFPS() {}
+	var fps = 0;
+	var lastCalledTime = {};
+	// Pre-assigning FPS [frames per second] Text (in constant variable) to the "FPS" label for later use
+	const fpsText = {};
 
+// Unused FPS Logic [updateFPS Function (unused)]
+function updateFPS() {
+    if(!lastCalledTime) {
+        lastCalledTime = Date.now();
+        fps = 0;
+        return;
+    }
+    delta = (Date.now() - lastCalledTime)/1000;
+    lastCalledTime = Date.now();
+    fps = 1/delta;
+}
+
+// Unused FPS Logic 2 [renderFPS Function (unused)]
+function renderFPS() {
+    fpsText.text = "FPS: " + Math.round(fps);
+}
+	// Calling unused / dysfunctional functions updateFPS() and renderFPS()
+	updateFPS();
+	renderFPS();
+
+		// Messing around with particles!
+		// Somehow ended up using these to display the count of bugemies. The particles themselves go unused (visually).
     bugemies = this.add.particles('bugemy');
 
+		// Particle System (made from emitters)
     bugemies.createEmitter({
+		  	// Inner contents should be self-explanatory.
         alpha: { start: 1, end: 0 },
         scale: { start: 0.5, end: 2.5 },
         //tint: { start: 0xff945e, end: 0xff945e },
@@ -120,37 +169,64 @@ function create() {
         y: 300
     });
 
+	// Creating the first bugemy
+	/*
+	1. This code creates a sprite for the first bugemy at 600, 100, setting its scale to 0.5.
+	2. Then it adds physics to the sprite
+	3. And sets a velocity of -100, 200, to the sprite, and makes it bounce (1-1) and collide with the world bounds.
+	*/
 	sprite1 = this.add.image(600, 100, 'bug2').setScale(0.5);
   this.physics.world.enable([ sprite1 ]);
   sprite1.body.setVelocity(-100, 200).setBounce(1, 1).setCollideWorldBounds(true);
 
+	// Creating the first bugemy
 	//const container1 = this.add.container(200, 50, [ sprite1 ]);
 
+	// Creating the second bugemy
+	/*
+	1. This code creates a new sprite at 0, 0 for the second bugemy and sets its scale to 0.5
+	2. And creates physics for the new sprite.
+	3. It then sets the sprite's velocity to 100, 200, sets its bounce to 1-1, and enables its world bounds collision.
+	*/
   sprite2 = this.add.image(0, 0, 'bug2').setScale(0.5);
   this.physics.world.enable([ sprite2 ]);
   sprite2.body.setVelocity(100, 200).setBounce(1, 1).setCollideWorldBounds(true);
 
+	// Creating the second bugemy (in giving it a container to control its movement)
   const container2 = this.add.container(200, 50, [ sprite2 ]);
 
+	// Creating the bugemy and bug pellet sprite
+	// In view of the explanations above, the two lines of code below should be self-explanatory.
 	this.add.image('bugPellet').setScale(2);
   image = this.add.image(600, 300, 'bug2');
+
+	// Creates a stopwatch and the text used to display its time
   text = this.add.text(36, 12, { fontSize: '15px', fontFamily: 'Times New Roman', color: '#000000' });
+	/*
+	1. This code creates a new text object at 36, 12.
+	2. It then sets the style of the text object to have a font size of 15px, a font family of Times New Roman, and a color of black (#000000).
+	*/
 	text.setStyle({ fontSize: '15px', fontFamily: 'Times New Roman', color: '#000000' });
   //timedEvent = this.time.addEvent({ delay: 2000, callback: onEvent, callbackScope: this });
-  timedEvent = this.time.delayedCall(112500, onEvent, [], this);
+	// Creates a timed event that will stop [calling the function onEvent()] after 112500 milliseconds [= 100 seconds].
+  timedEvent = this.time.delayedCall(100000, onEvent, [], this);
 
+	// Creates the wings powerup and gives it a container in the same manner as the bugemy sprites
 	wings = this.add.image(0, 0, 'wings').setScale(0.022);
   this.physics.world.enable([ wings ]);
   wings.body.setVelocity(-200, 200).setBounce(0, 0).setCollideWorldBounds(true);
 
   const container = this.add.container(0, 0, [ wings ]);
 
+	// When gameState.active is false, the game will listen for a "pointerup" event and restart when the event happens.
 	this.input.on('pointerup', () => {
 		if (gameState.active === false) {
 			this.scene.restart();
 		}
 	});
 
+	// Assigns constant variables to the game's sound effects
+	// These constant variables go unused as the game is still functions without them, but remain for future reference and as a backup plan
 	const vineBoom = document.getElementById('assets/audio/vine_boom.wav');
 	const death = document.getElementById('assets/audio/death.mp3');
 	const death2 = document.getElementById('assets/audio/death2.mp3');
@@ -164,6 +240,8 @@ function create() {
 	const poof = document.getElementById('assets/audio/poof.mp3');
 	const win = document.getElementById('assets/audio/victory.mp3');
 
+	// These functions are used for cases where multiple sounds are played at the same time / simultaneously
+	// [functions playAudio() and playAudioPU()]
 	function playAudio() {
 		gameState.vineBoom.play();
 		gameState.death.play();
@@ -181,28 +259,26 @@ function create() {
 	}
 
 	//layerBar();
-
+	// Creates Codey a.k.a. the player a.k.a. you!
 	gameState.player = this.physics.add.sprite(225, 360, 'codey').setScale(.5);
+	// Displays the initial number of bugs; this value is initially hardcoded as 24.
 	gameState.scoreText = this.add.text(154, 13, 'Buggers Left: 24', { fontSize: '15px', fill: '#000000' });
+	// The text is cloned to add / create more contrast between the text and background color
 	gameState.scoreText2 = this.add.text(154, 13, 'Buggers Left: 24', { fontSize: '15px', fill: '#36454F' });
 
+	// Creating static platforms, side borders, and a ceiling to keep the player within the right bounds.
 	const platforms = this.physics.add.staticGroup();
 	const sideBorders = this.physics.add.staticGroup();
 	const vertforms = this.physics.add.staticGroup();
 	const horiforms = this.physics.add.staticGroup();
-	const bars = this.physics.add.staticGroup();
-
-	//const sideBorders = this.physics.add.staticImage(469, 153, 'sideBorder');
-	//const vertforms = this.physics.add.staticImage(-19, 153, 'vertform');
-	//const horiforms = this.physics.add.staticImage(290, 340, 'horiform');
-	//const bars = this.physics.add.staticImage(154, 13, 'bar');
-
-	platforms.create(225, 390, 'platform').setScale(1, .3).refreshBody();
+	//const bars = this.physics.add.staticGroup();
+	platforms.create(226, 390, 'platform').setScale(1, .3).refreshBody();
 	sideBorders.create(469, 153, 'sideBorder').setScale(1).refreshBody();
 	vertforms.create(-19, 153, 'vertform').setScale(1).refreshBody();
 	horiforms.create(244, 148, 'horiform').setScale(1, .4).refreshBody();
 	//bars.create(225, 35, 'bar').setScale(.037).refreshBody();
 
+	// Creating collider objects between all bounds
 	gameState.player.setCollideWorldBounds(true);
 	this.physics.add.collider(gameState.player, platforms);
 	this.physics.add.collider(gameState.player, sideBorders);
@@ -210,6 +286,7 @@ function create() {
 	this.physics.add.collider(gameState.player, horiforms);
 	//this.physics.add.collider(gameState.player, bars);
 
+	// Creating a random array of buggers at the top half of the screen
 	gameState.enemies = this.physics.add.group();
 
 	for (let yVal = 1; yVal < 4; yVal++) {
@@ -218,14 +295,17 @@ function create() {
 		}
 	}
 
+	// Adding physics to the the bug pellets through the ph. plugin and a constant variable
 	const pellets = this.physics.add.group();
 
+	// Generates pellets at random frequencies
 	const genPellet = () => {
 		let randomBug = Phaser.Utils.Array.GetRandom(gameState.enemies.getChildren());
 
 		pellets.create(randomBug.x, randomBug.y, 'bugPellet');
 	};
 
+	// Loop pellet generation
 	gameState.pelletsLoop = this.time.addEvent({
 		delay: 300,
 		callback: genPellet,
@@ -233,17 +313,21 @@ function create() {
 		loop: true
 	});
 
+	// Destroys pellets and plays a cool little sound when they hit the ground
 	this.physics.add.collider(pellets, platforms, (pellet)=> {
     	pellet.destroy();
 			gameState.hit.play();
 		});
 
+	// Destroys pellets and plays a cool little sound when they hit any other border
   this.physics.add.collider(vertforms, horiforms,
 		(pellet) => {
 			pellet.destroy();
 			gameState.hit.play();
 		});
 
+	// The game is over if the player is hit by a pellet
+	// All sound effects are momentarily paused, gamestate.active is set to false, and "Game Over" text is displayed
 	this.physics.add.collider(pellets, gameState.player, () => {
     gameState.active = false;
     gameState.pelletsLoop.destroy();
@@ -254,8 +338,6 @@ function create() {
 		gameState.flapP.pause();
 		gameState.shoot.pause();
 		this.physics.pause();
-		//loading.destroy();
-		//loading = null;
 		this.add.text(175, 250, '   Game Over \n Click to Restart',
 		{ fontSize: '15px', fontFamily: 'Georgia', fill: '#111' });
 		playAudio();
@@ -263,6 +345,8 @@ function create() {
 		loading.remove();
 	});
 
+	// Same for the bugemies; if they get a little too close to the player, the game is over.
+	// All sound effects are momentarily paused, gamestate.active is set to false, and "Game Over" text is displayed
 	this.physics.add.collider(sprite1, gameState.player, () => {
     gameState.active = false;
     gameState.pelletsLoop.destroy();
@@ -297,11 +381,14 @@ function create() {
 		loading.remove();
 	});
 
+	// Logic for collecting the wings powerup.
+	// WIP: Two .mp3 files are played simultaneously to create nice retro sfx and the wings sprite is destroyed
 	this.physics.add.collider(wings, gameState.player, () => {
 		playAudioPU();
 		wings.destroy();
 	});
 
+	// Pauses the falling audio when the player hits / collides with the ground
 	this.physics.add.collider(platforms, gameState.player, () => {
 		gameState.fall.pause();
     gameState.NULL.play();
@@ -312,6 +399,8 @@ function create() {
 	gameState.bugRepellent = this.physics.add.group();
 	//gameState.bugRepellent = {};
 
+	// Logic for shooting the enemy bugs (When player pellets hit a bug, it, along with the player pellet is destroyed)
+	// Bugger count decreases (player's score increases) and a sound effect is played
 	this.physics.add.collider(gameState.enemies, gameState.bugRepellent, (bug, repellent) => {
     bug.destroy();
     repellent.destroy();
@@ -320,15 +409,19 @@ function create() {
 		gameState.scoreText2.setText(`Buggers Left: ${numOfTotalEnemies()}`);
   });
 
+	// Creates cursor objects to be used in function update() below
 	gameState.cursors = this.input.keyboard.createCursorKeys();
 }
 
-
+// UPDATE FUNCTION
 function update() {
+	// calling function updateAux()
 	updateAux1();
-	updateFPS();
+	// Both bugemies bounce off each other when they collide
 	this.physics.world.collide(sprite1, sprite2);
+	// Sets and extends the time display (text) from the stopwatch
 	text.setText('Time: ' + timedEvent.getProgress().toString().substr(0, 4));
+	// Player Controls: Left, Right, Up, and Down
 	if (gameState.cursors.left.isDown) {
 		gameState.player.setVelocityX(-160);
 	} else if (gameState.cursors.right.isDown) {
@@ -344,24 +437,20 @@ function update() {
 		gameState.player.setVelocityY(140);
 	}
 
-		function updateFPS (time, delta)
-	{
-    fpsText.setText('FPS: ' + (1000/delta).toFixed(3) + '\n' +
-        bugemies.emitters.first.alive.length + ' Bugemies');
-	}
-
-
+	// Shoots a player pellet when the spacebar is pressed
 	if (Phaser.Input.Keyboard.JustDown(gameState.cursors.space)) {
 		gameState.bugRepellent.create(gameState.player.x, gameState.player.y, 'bugRepellent').setGravityY(-200).setVelocityY(-200);
 		gameState.shoot.play();
 	}
 
+	// Victory! [when all buggers are destroyed]
 	if (numOfTotalEnemies() === 0) {
 		gameState.win.play();
     gameState.active = false;
 		gameState.enemyVelocity = 0;
     this.physics.pause();
     this.add.text(165, 250,'You Won!', { fontSize: '22.5px', fontFamily: 'Georgia', fill: '#333' });
+		timedEvent.remove(false);
   } else {
     gameState.enemies.getChildren().forEach(bug => {
       bug.x += gameState.enemyVelocity;
@@ -377,6 +466,7 @@ function update() {
 		}
 	}
 
+// Player Controls to sound effects, not movement
 function updateAux1() {
 	if (gameState.cursors.left.isUp) {
 		gameState.walkP.play();
@@ -391,6 +481,7 @@ function updateAux1() {
 	}
 }
 
+// Victory! [when the player has survived long enough (when the time is up)]
 function onEvent ()
 {
 	gameState.win.play();
@@ -425,7 +516,7 @@ const config = {
 const game = new Phaser.Game(config);
 
 function render() {
-  game.debug.text('FPS: ' + game.time.fps, 175, 250, '#00ff00');
+  //game.debug.text('FPS: ' + game.time.fps, 175, 250, '#00ff00');
 }
 	
 render();
